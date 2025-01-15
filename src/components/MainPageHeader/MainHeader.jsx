@@ -5,13 +5,13 @@ import { Link } from 'react-router-dom';
 
 
 
-const MainHeader = () => {
+const MainHeader = ({onMovieSelect}) => {
       const [profileHovered, setProfileHovered] = useState(false);
 
   return (
     <header style={headerStyle}>
       <img src={logo} alt="Logo" style={logoStyle} />
-      <HeaderMenu />
+      <HeaderMenu onMovieSelect={onMovieSelect}/>
       <div style={rightSectionStyle}>
       <Link to="/upload-movie" style={{ textDecoration: 'none' }}>
               <button style={uploadButtonStyle}>

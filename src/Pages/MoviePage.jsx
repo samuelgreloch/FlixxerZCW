@@ -17,6 +17,9 @@ const MoviePage = () => {
     );
   }
 
+  const getVideoUrl = (movieTitle) =>
+    `/Trailers/${movieTitle}.mp4`;
+
   // You can directly use `movie` details here
   const containerStyle = {
     display: 'flex',
@@ -53,7 +56,7 @@ const MoviePage = () => {
   return (
     <div style={containerStyle}>
       <div style={videoPlayerStyle}>
-        <ReactPlayer url={movie.videoUrl} controls width="100%" />
+        <ReactPlayer url={getVideoUrl(movie.title)} controls width="100%" />
       </div>
 
       <div style={statsStyle}>

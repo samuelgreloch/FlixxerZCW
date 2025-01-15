@@ -15,7 +15,7 @@ const SearchByText = ({ onSearch }) => {
         type="text"
         value={searchText}
         onChange={handleSearchChange}
-        placeholder="Search posts or usernames..."
+        placeholder="Search for Hot Takes or UserNames..."
         style={styles.searchInput}
       />
     </div>

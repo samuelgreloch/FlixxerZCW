@@ -1,32 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const TVShowScroll = ({ title, shows = [] }) => {
-  const navigate = useNavigate();
-
-  const handleThumbnailClick = (showId) => {
-    navigate(`/tvshow/${showId}`);
-  };
-
-  return (
-    <div style={containerStyle}>
-      {title && <h2 style={titleStyle}>{title}</h2>}
-      <div style={scrollableStyle}>
-        {shows.map((show) => (
-          <img
-            key={show.id}
-            src={show.thumbnail}
-            alt={show.title}
-            style={thumbnailStyle}
-            onClick={() => handleThumbnailClick(show.id)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const TVShowPage = ({ tvShows = [] }) => {
+  const navigate = useNavigate();
+
   const categories = {
     Drama: tvShows.filter((show) => show.genre.includes('Drama')),
     Comedy: tvShows.filter((show) => show.genre.includes('Comedy')),
@@ -36,12 +14,51 @@ const TVShowPage = ({ tvShows = [] }) => {
     Historical: tvShows.filter((show) => show.genre.includes('Historical')),
   };
 
+  const handleScroll = (direction, categoryId) => {
+    const container = document.getElementById(categoryId);
+    if (container) {
+      const scrollAmount = 220; // Adjust this value based on your thumbnail width
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+
   return (
     <div style={componentTVShowScreenStyle}>
       <h1 style={mainTitleStyle}>TV Shows</h1>
       {Object.entries(categories).map(([category, shows]) => (
         shows.length > 0 && (
-          <TVShowScroll key={category} title={category} shows={shows} />
+          <div key={category} style={categoryContainerStyle}>
+            <h2 style={titleStyle}>{category}</h2>
+            <div style={scrollContainerStyle}>
+              <button
+                style={{...arrowStyle, left: 0}}
+                onClick={() => handleScroll('left', `category-${category}`)}
+              >
+                ←
+              </button>
+              <div id={`category-${category}`} style={scrollableStyle}>
+                {shows.map((show) => (
+                  <img
+                    key={show.contentId}
+                    src={show.thumbnail}
+                    alt={show.title}
+                    style={thumbnailStyle}
+                    onClick={() => navigate(`/tvshow/${show.contentId}`)}
+                  />
+                ))}
+              </div>
+              <button
+                style={{...arrowStyle, right: 0}}
+                onClick={() => handleScroll('right', `category-${category}`)}
+              >
+                →
+              </button>
+            </div>
+          </div>
         )
       ))}
     </div>
@@ -49,34 +66,6 @@ const TVShowPage = ({ tvShows = [] }) => {
 };
 
 // Styles
-const containerStyle = {
-  width: '100%',
-  padding: '10px',
-  backgroundColor: '#000',
-};
-
-const titleStyle = {
-  color: '#fff',
-  fontSize: '1.5rem',
-  marginBottom: '10px',
-};
-
-const scrollableStyle = {
-  display: 'flex',
-  overflowX: 'auto',
-  gap: '10px',
-  padding: '10px 0',
-  alignItems: 'center',
-};
-
-const thumbnailStyle = {
-  width: '220px',
-  height: '121px',
-  cursor: 'pointer',
-  borderRadius: '5px',
-  objectFit: 'cover',
-};
-
 const componentTVShowScreenStyle = {
   flex: '3',
   display: 'flex',
@@ -97,12 +86,61 @@ const mainTitleStyle = {
   padding: '0 10px',
 };
 
-const showsGridStyle = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-  gap: '0', // Set gap to 0
-  padding: '1rem 0',
+const categoryContainerStyle = {
+  marginBottom: '20px',
 };
 
+const titleStyle = {
+  color: '#fff',
+  fontSize: '1.5rem',
+  marginBottom: '10px',
+  paddingLeft: '10px',
+};
+
+const scrollContainerStyle = {
+  position: 'relative',
+};
+
+const scrollableStyle = {
+  display: 'flex',
+  overflowX: 'auto',
+  gap: '10px',
+  padding: '10px 40px',
+  alignItems: 'center',
+  scrollbarWidth: 'none',
+  '-ms-overflow-style': 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none'
+  },
+};
+
+const thumbnailStyle = {
+  width: '220px',
+  height: '121px',
+  cursor: 'pointer',
+  borderRadius: '5px',
+  objectFit: 'cover',
+};
+
+const arrowStyle = {
+  position: 'absolute',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  background: 'rgba(0, 0, 0, 0.5)',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '50%',
+  width: '40px',
+  height: '40px',
+  fontSize: '20px',
+  cursor: 'pointer',
+  zIndex: 1,
+};
+
+const containerStyle = {
+  width: '100%',
+  padding: '10px',
+  backgroundColor: '#000',
+};
 
 export default TVShowPage;

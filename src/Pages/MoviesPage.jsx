@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 const MoviesPage = ({ movies }) => {
   const navigate = useNavigate();
 
-  // You might want to adjust these categories based on your actual movie data
   const categories = {
     Action: movies.filter((movie) => movie.genre?.includes('Action')),
     Comedy: movies.filter((movie) => movie.genre?.includes('Comedy')),
@@ -14,52 +13,24 @@ const MoviesPage = ({ movies }) => {
     Horror: movies.filter((movie) => movie.genre?.includes('Horror')),
   };
 
+//   const handleMovieClick = (movieId) => {
+//     navigate(`/movie/${movieId}`);
+//   };
+
   const handleMovieClick = (movieId) => {
-    navigate(`/movie/${movieId}`);
+    const selectedMovie = movies.find((movie) => movie.contentId === movieId);
+    navigate(`/movie/${movieId}`, { state: { movie: selectedMovie } });
   };
 
-  const containerStyle = {
-    width: '100%',
-    padding: '10px',
-    backgroundColor: '#000',
-    color: '#fff',
-  };
-
-  const categoryStyle = {
-    marginBottom: '2rem',
-  };
-
-  const categoryTitleStyle = {
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    marginBottom: '1rem',
-    color: '#e5e5e5',
-  };
-
-  const moviesGridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-    gap: '0',
-    padding: '1rem 0',
-  };
-
-  const movieCardStyle = {
-    position: 'relative',
-    transition: 'transform 0.3s ease',
-    cursor: 'pointer',
-  };
-
-  const thumbnailStyle = {
-    width: '100%',
-    aspectRatio: '16/9',
-    objectFit: 'cover',
-    borderRadius: '4px',
-  };
-
-  const movieTitleStyle = {
-    marginTop: '0.5rem',
-    fontSize: '0.9rem',
-    textAlign: 'center',
+  const handleScroll = (direction, categoryId) => {
+    const container = document.getElementById(categoryId);
+    if (container) {
+      const scrollAmount = 220; // Adjust this value based on your thumbnail width
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
   };
 
   return (
@@ -69,27 +40,41 @@ const MoviesPage = ({ movies }) => {
         categoryMovies.length > 0 && (
           <div key={category} style={categoryStyle}>
             <h2 style={categoryTitleStyle}>{category}</h2>
-            <div style={moviesGridStyle}>
-              {categoryMovies.map((movie) => (
-                <div
-                  key={movie.id}
-                  style={movieCardStyle}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                  }}
-                  onClick={() => handleMovieClick(movie.id)}
-                >
-                  <img
-                    src={movie.thumbnail}
-                    alt={movie.title}
-                    style={thumbnailStyle}
-                  />
-                  <div style={movieTitleStyle}>{movie.title}</div>
-                </div>
-              ))}
+            <div style={scrollContainerStyle}>
+              <button
+                style={{...arrowStyle, left: 0}}
+                onClick={() => handleScroll('left', `category-${category}`)}
+              >
+                ←
+              </button>
+              <div id={`category-${category}`} style={scrollableStyle}>
+                {categoryMovies.map((movie) => (
+                  <div
+                    key={movie.contentId}
+                    style={movieCardStyle}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                    onClick={() => handleMovieClick(movie.contentId)}
+                  >
+                    <img
+                      src={movie.thumbnail}
+                      alt={movie.title}
+                      style={thumbnailStyle}
+                    />
+                    <div style={movieTitleStyle}>{movie.title}</div>
+                  </div>
+                ))}
+              </div>
+              <button
+                style={{...arrowStyle, right: 0}}
+                onClick={() => handleScroll('right', `category-${category}`)}
+              >
+                →
+              </button>
             </div>
           </div>
         )
@@ -98,4 +83,78 @@ const MoviesPage = ({ movies }) => {
   );
 };
 
+// Styles
+const containerStyle = {
+  width: '100%',
+  padding: '10px',
+  backgroundColor: '#000',
+  color: '#fff',
+};
+
+const categoryStyle = {
+  marginBottom: '2rem',
+};
+
+const categoryTitleStyle = {
+  fontSize: '1.5rem',
+  fontWeight: 'bold',
+  marginBottom: '1rem',
+  color: '#e5e5e5',
+};
+
+const scrollContainerStyle = {
+  position: 'relative',
+};
+
+const scrollableStyle = {
+  display: 'flex',
+  overflowX: 'auto',
+  gap: '10px',
+  padding: '10px 40px',
+  alignItems: 'center',
+  scrollbarWidth: 'none',
+  '-ms-overflow-style': 'none',
+  '&::-webkit-scrollbar': {
+    display: 'none'
+  },
+};
+
+const movieCardStyle = {
+  position: 'relative',
+  transition: 'transform 0.3s ease',
+  cursor: 'pointer',
+  flexShrink: 0,
+  width: '200px',
+};
+
+const thumbnailStyle = {
+  width: '100%',
+  aspectRatio: '16/9',
+  objectFit: 'cover',
+  borderRadius: '4px',
+};
+
+const movieTitleStyle = {
+  marginTop: '0.5rem',
+  fontSize: '0.9rem',
+  textAlign: 'center',
+};
+
+const arrowStyle = {
+  position: 'absolute',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  background: 'rgba(0, 0, 0, 0.5)',
+  color: '#fff',
+  border: 'none',
+  borderRadius: '50%',
+  width: '40px',
+  height: '40px',
+  fontSize: '20px',
+  cursor: 'pointer',
+  zIndex: 1,
+};
+
+
 export default MoviesPage;
+

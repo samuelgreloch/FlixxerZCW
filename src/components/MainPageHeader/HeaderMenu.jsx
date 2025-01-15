@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import './HeaderMenu.css'; // Import the CSS file for styles
 import { Link, useNavigate } from 'react-router-dom';
 
-function HeaderMenu() {
+function HeaderMenu({onMovieSelect}) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [searchQuery, setSearchQuery] = useState(''); // State to handle search input
   const navigate = useNavigate();
+
+const handleHomeClick = (movieId) => {
+    if (onMovieSelect) {
+      onMovieSelect(" "); // Notify parent Page of the selected movie
+    }
+  };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value); // Update the search query as the user types
@@ -40,39 +46,44 @@ function HeaderMenu() {
   ];
 
   return (
-    <header>
-      <nav>
-        <ul className="menu">
-          {menus.map((menu, index) => (
-            <li
-              key={index}
-              className="menu-item"
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              onClick={() => handleMenuClick(menu.title)}
-            >
-              {menu.title === 'Home' ? (
-                <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
-                  {menu.title}
-                </Link>
-              ) : (
-                menu.title
-              )}
+      <header>
+        <nav>
+          <ul className="menu">
+            {menus.map((menu, index) => (
+              <li
+                key={index}
+                className="menu-item"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onClick={() => handleMenuClick(menu.title)}
+              >
+                {menu.title === 'Home' ? (
+                  <Link
+                   to="/"
+                   style={{ textDecoration: 'none', color: 'white' }}
+                   onClick={() => handleHomeClick(" ")} // Properly handling the click event
+                   >
+                    {menu.title}
+                  </Link>
+                ) : (
+                  menu.title
+                )}
+              </li>
+            ))}
+            <li className="search-item">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="search-box"
+              />
             </li>
-          ))}
-          <li className="search-item">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="search-box"
-            />
-          </li>
-        </ul>
-      </nav>
-    </header>
-  );
-}
+          </ul>
+        </nav>
+      </header>
+    );
+  }
+
 
 export default HeaderMenu;

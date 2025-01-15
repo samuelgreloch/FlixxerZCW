@@ -19,6 +19,7 @@ import SearchByHashtag from "./SearchByHashtag";
     const fetchPosts = async () => {
       try {
         const response = await fetch(`http://localhost:8080/getTweet?movieId=${movieId}`);
+      //  const response = await fetch(`http://localhost:8080/posts/all?movieId=${movieId}`);
         if (!response.ok) throw new Error("Failed to fetch posts");
         const data = await response.json();
         console.log("Fetched data:", data.tweets);
@@ -135,7 +136,7 @@ import SearchByHashtag from "./SearchByHashtag";
         </button>
         <input
           type="text"
-          placeholder="Write your post..."
+          placeholder="Write your Hot Takes..."
           value={postText}
           maxLength={255}
           onChange={handlePostInputChange}
