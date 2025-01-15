@@ -44,4 +44,11 @@ public class PostController {
     public @ResponseBody List<HotTake> getAllPost(@PathVariable Long videoId) {
         return postService.gethotTakesbyVideoId(videoId);
     }
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(value="/posts/save/hotTake")
+    public @ResponseBody Post savePost(@RequestBody HotTake hotTake){
+        return postService.saveHotTake(hotTake);
+    }
+
+
 }

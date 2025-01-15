@@ -51,9 +51,6 @@ public class PostService {
     }
 
 
-
-
-
     public Post savePostWithUserAndVideo(Long userId, Long ContentId, Post post) {
         User user = userRepo.findByUserId(userId);
         Video video = videoRepo.findByContentId(ContentId);
@@ -63,13 +60,22 @@ public class PostService {
     }
 
 
-    public List<HotTake> gethotTakesbyVideoId(Long videoId){
+    public List<HotTake> gethotTakesbyVideoId(Long videoId) {
         List<Post> posts = postRepo.findPostsByVideoContentId(videoId);
         List<HotTake> hotTakes = new ArrayList<>();
         for (Post post : posts) {
-            hotTakes.add(new HotTake(videoId, post.getUser().getUsername(),post.getMessage(),post.getTimestamp()));
+            hotTakes.add(new HotTake(videoId, post.getUser().getUsername(), post.getMessage(), post.getTimestamp()));
         }
         return hotTakes;
     }
 
+    public Post saveHotTake(HotTake hotTake) {
+
+        Post post = new Post();
+        post.setUser(userRepo.findByUsername(hotTake.getUsername()));
+        post.setMessage(hotTake.getMessage());
+        post.setTimestamp(hotTake.getTimestamp());
+
+        return postRepo.save(post);
+    }
 }
